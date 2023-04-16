@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.brunner.server">
+
+<!-- TB_COR_AUTHORITY_GROUP_PROGRAM -->
+<!-- TB_COR_AUTHORITY_GROUP_PROGRAM.INSERT -->
+  <insert id="insert_TB_COR_AUTHORITY_GROUP_PROGRAM_01">
+  <![CDATA[
+    insert into BRUNNER.TB_COR_AUTHORITY_GROUP_PROGRAM
+          (SYSTEM_CODE, AUTHORITY_GROUP_ID, PROGRAM_ID, USE_FLAG, CREATE_USER_ID, 
+           CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME)
+   values (#{systemCode}, #{authorityGroupId}, #{programId}, #{useFlag}, #{createUserId}, 
+           NOW(), NULL, NULL) 
+	]]>
+  </insert> 
+  
+<!-- TB_COR_AUTHORITY_GROUP_PROGRAM.UPDATE -->
+  <update id="update_TB_COR_AUTHORITY_GROUP_PROGRAM_01">
+  <![CDATA[
+    update BRUNNER.TB_COR_AUTHORITY_GROUP_PROGRAM
+       set USE_FLAG = 'Y',
+           UPDATE_USER_ID = #{updateUserId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and AUTHORITY_GROUP_ID = #{authorityGroupId}
+       and PROGRAM_ID = #{programId}
+	]]>
+  </update>
+  
+  <update id="update_TB_COR_AUTHORITY_GROUP_PROGRAM_02">
+  <![CDATA[
+    update BRUNNER.TB_COR_AUTHORITY_GROUP_PROGRAM
+       set USE_FLAG = NULL,
+           UPDATE_USER_ID = #{updateUserId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and AUTHORITY_GROUP_ID = #{authorityGroupId}
+       and PROGRAM_ID = #{programId}
+	]]>
+  </update> 
+
+<!-- TB_COR_AUTHORITY_GROUP_PROGRAM.SELECT -->  
+  <select id="select_TB_COR_AUTHORITY_GROUP_PROGRAM_01" resultType="java.util.HashMap">
+  <![CDATA[
+    select GP.AUTHORITY_GROUP_ID, GP.PROGRAM_ID, PM.PARENT_PROGRAM_ID, PM.DISPLAY_SEQ, PM.PROGRAM_NAME,
+           PM.PROGRAM_CLASS_PATH 
+      from BRUNNER.TB_COR_AUTHORITY_GROUP_PROGRAM GP
+     inner join BRUNNER.TB_COR_PROGRAM_MST PM 
+        on (PM.SYSTEM_CODE = GP.SYSTEM_CODE 
+            and PM.PROGRAM_ID = GP.PROGRAM_ID
+            and PM.USE_FLAG = 'Y')
+     where GP.SYSTEM_CODE = #{systemCode}
+       and GP.AUTHORITY_GROUP_ID = #{authorityGroupId}
+       and GP.USE_FLAG = 'Y'
+	]]>
+  </select>   
+ 
+  <select id="select_TB_COR_AUTHORITY_GROUP_PROGRAM_02" resultType="java.util.HashMap">
+  <![CDATA[
+    select AUTHORITY_GROUP_ID, PROGRAM_ID
+      from BRUNNER.TB_COR_AUTHORITY_GROUP_PROGRAM
+     where SYSTEM_CODE = #{systemCode}
+       and AUTHORITY_GROUP_ID = #{authorityGroupId}
+       and PROGRAM_ID = #{programId} 
+	]]>
+  </select>
+  
+  <select id="select_TB_COR_AUTHORITY_GROUP_PROGRAM_03" resultType="java.util.HashMap">
+  <![CDATA[
+	select PM.PROGRAM_ID, PM.DISPLAY_SEQ, PM.PROGRAM_NAME, PM.PROGRAM_CLASS_PATH
+      from TB_COR_AUTHORITY_GROUP_PROGRAM GP
+     inner join TB_COR_USER_MST UM 
+        on (UM.SYSTEM_CODE = GP.SYSTEM_CODE 
+       and UM.AUTHORITY_GROUP_ID = gp.AUTHORITY_GROUP_ID
+       and UM.USER_ID = #{userId}
+       and UM.USE_FLAG = 'Y')
+     inner join TB_COR_PROGRAM_MST PM
+        on (PM.SYSTEM_CODE = GP.SYSTEM_CODE 
+       and PM.PROGRAM_ID = gp.PROGRAM_ID 
+       and (PM.PARENT_PROGRAM_ID is NULL OR trim(pm.PARENT_PROGRAM_ID) = '') 
+       and PM.USE_FLAG = 'Y')
+     where GP.SYSTEM_CODE = #{systemCode}
+       and GP.USE_FLAG = 'Y'
+     order by PM.DISPLAY_SEQ asc
+	]]>
+  </select>     
+
+  <select id="select_TB_COR_AUTHORITY_GROUP_PROGRAM_04" resultType="java.util.HashMap">
+  <![CDATA[
+	select PM.PROGRAM_ID, PM.DISPLAY_SEQ, PM.PROGRAM_NAME, PM.PROGRAM_CLASS_PATH
+      from TB_COR_AUTHORITY_GROUP_PROGRAM GP
+     inner join TB_COR_USER_MST UM 
+        on (UM.SYSTEM_CODE = GP.SYSTEM_CODE 
+            AND UM.AUTHORITY_GROUP_ID = gp.AUTHORITY_GROUP_ID
+       and UM.USER_ID = #{userId}
+       and UM.USE_FLAG = 'Y')
+     inner join TB_COR_PROGRAM_MST PM
+        on (PM.SYSTEM_CODE = GP.SYSTEM_CODE 
+       and PM.PROGRAM_ID = GP.PROGRAM_ID 
+       and PM.PARENT_PROGRAM_ID = #{parentProgramId} 
+       and PM.USE_FLAG = 'Y')
+     where GP.SYSTEM_CODE = #{systemCode} 
+       and GP.USE_FLAG = 'Y'
+     order by PM.DISPLAY_SEQ asc
+	]]>
+  </select>
+</mapper>

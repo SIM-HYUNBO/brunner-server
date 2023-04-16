@@ -1,0 +1,7 @@
+rootProject.name = 'brunner-server'
+
+include ":brunner-service"
+project(':brunner-service').projectDir = new File(settingsDir , "../brunner-service")
+
+include ":brunner-service-sales"
+project(':brunner-service-sales').projectDir = new File(settingsDir , "../brunner-service-sales")

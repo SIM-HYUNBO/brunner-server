@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.brunner.server">
+
+<!-- TB_CUS_MATERIAL_PURCHASE --> 
+<!-- TB_CUS_MATERIAL_PURCHASE.INSERT -->  
+  <insert id="insert_TB_CUS_MATERIAL_PURCHASE_01">
+  <![CDATA[
+    insert into SALES.TB_CUS_MATERIAL_PURCHASE 
+           (SYSTEM_CODE, USER_ID, PURCHASE_SERIAL_NO, PURCHASE_DATE, VENDOR_ID, 
+            MATERIAL_NAME, MATERIAL_UNIT, UNIT_PRICE, PURCHASE_COUNT, PURCHASE_AMOUNT,
+            PAID_AMOUNT, PURCHASE_COMMENT, USE_FLAG, CREATE_USER_ID, CREATE_TIME, 
+            UPDATE_USER_ID, UPDATE_TIME)
+    values (#{systemCode}, 
+            #{userId}, 
+            (select GEN.SERIAL_NO 
+              from (select IFNULL(MAX(PURCHASE_SERIAL_NO), CONCAT(#{purchaseDate}, '000000')) + 1 as SERIAL_NO
+  									  from SALES.TB_CUS_MATERIAL_PURCHASE
+ 										 where SYSTEM_CODE = #{systemCode}
+   									   and USER_ID = #{userId}
+   										 and PURCHASE_DATE = #{purchaseDate}
+                   ) GEN), 
+            #{purchaseDate}, 
+            #{vendorId},
+            #{materialName}, 
+            #{materialUnit}, 
+            #{unitPrice}, 
+            #{purchaseCount}, 
+            #{purchaseAmount},
+            #{paidAmount}, 
+            #{purchaseComment}, 
+            'Y', 
+            #{userId}, 
+            NOW(), 
+            NULL, 
+            NULL)
+	]]>
+  </insert>
+
+  <update id="update_TB_CUS_MATERIAL_PURCHASE_01">
+  <![CDATA[
+    update SALES.TB_CUS_MATERIAL_PURCHASE
+       set PURCHASE_COUNT = #{purchaseCount},
+           PURCHASE_AMOUNT = #{purchaseAmount},
+           PAID_AMOUNT = #{paidAmount},
+           PURCHASE_COMMENT = #{purchaseComment},
+           USE_FLAG = 'Y',
+           UPDATE_USER_ID = #{userId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and PURCHASE_SERIAL_NO = #{purchaseSerialNo}
+	]]>
+  </update>
+  
+<!-- TB_CUS_MATERIAL_PURCHASE.UPDATE -->    
+  <update id="update_TB_CUS_MATERIAL_PURCHASE_02">
+  <![CDATA[
+    update SALES.TB_CUS_MATERIAL_PURCHASE
+       set USE_FLAG = NULL,
+           UPDATE_USER_ID = #{updateUserId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId}
+       and PURCHASE_SERIAL_NO = #{purchaseSerialNo}
+	]]>
+  </update>
+
+<!-- TB_CUS_MATERIAL_PURCHASE.SELECT -->    
+  <select id="select_TB_CUS_MATERIAL_PURCHASE_01" resultType="java.util.HashMap">
+  <![CDATA[
+    select PS.PURCHASE_SERIAL_NO, PS.PURCHASE_DATE, PS.VENDOR_ID, CM.REGISTER_NAME, PS.MATERIAL_NAME, PS.MATERIAL_UNIT, 
+           PS.UNIT_PRICE, PS.PURCHASE_COUNT, PS.PURCHASE_AMOUNT, PS.PAID_AMOUNT, PS.PURCHASE_COMMENT
+      from SALES.TB_CUS_MATERIAL_PURCHASE PS
+     inner join SALES.TB_CUS_VENDOR_MST CM 
+        on (CM.SYSTEM_CODE = PS.SYSTEM_CODE
+       and CM.USER_ID = PS.USER_ID
+       and CM.VENDOR_ID = PS.VENDOR_ID)
+     where PS.SYSTEM_CODE = #{systemCode} 
+       and PS.USER_ID = #{userId}
+       and PS.PURCHASE_DATE >= #{fromPurchaseDate}
+       and PS.PURCHASE_DATE <= #{toPurchaseDate}
+       and PS.USE_FLAG = 'Y'
+	]]>
+  </select>    
+   
+  <select id="select_TB_CUS_MATERIAL_PURCHASE_02" resultType="java.util.HashMap">
+  <![CDATA[
+    select PURCHASE_DATE, VENDOR_ID, MATERIAL_NAME, MATERIAL_UNIT, UNIT_PRICE, 
+           PURCHASE_COUNT, PURCHASE_AMOUNT, PAID_AMOUNT, PURCHASE_COMMENT
+      from SALES.TB_CUS_MATERIAL_PURCHASE
+     where SYSTEM_CODE = #{systemCode} 
+       and USER_ID = #{userId}
+       and PURCHASE_SERIAL_NO = #{purchaseSerialNo}
+	]]>
+  </select> 
+  
+   <select id="select_TB_CUS_MATERIAL_PURCHASE_03" resultType="java.util.HashMap">
+  <![CDATA[
+    select PS.PURCHASE_SERIAL_NO, PS.PURCHASE_DATE, PS.VENDOR_ID, CM.REGISTER_NAME, PS.MATERIAL_NAME, 
+           PS.MATERIAL_UNIT, PS.UNIT_PRICE, PS.PURCHASE_COUNT, PS.PURCHASE_AMOUNT, PS.PAID_AMOUNT, 
+           PS.PURCHASE_COMMENT
+      from SALES.TB_CUS_MATERIAL_PURCHASE PS
+     inner join SALES.TB_CUS_VENDOR_MST CM 
+        on (CM.SYSTEM_CODE = PS.SYSTEM_CODE
+       and CM.USER_ID = PS.USER_ID
+       and CM.VENDOR_ID = PS.VENDOR_ID)
+     where PS.SYSTEM_CODE = #{systemCode} 
+       and PS.USER_ID = #{userId}
+       and PS.PURCHASE_DATE >= #{fromPurchaseDate}
+       and PS.PURCHASE_DATE <= #{toPurchaseDate}
+       and PS.VENDOR_ID = #{vendorId}
+       and PS.USE_FLAG = 'Y'
+	]]>
+  </select>      
+</mapper>

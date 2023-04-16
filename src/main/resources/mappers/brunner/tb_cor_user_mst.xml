@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.brunner.server">
+
+<!-- TB_COR_USER_MST -->
+<!-- TB_COR_USER_MST.INSERT -->
+  <insert id="insert_TB_COR_USER_MST_01">
+  <![CDATA[
+    insert into BRUNNER.TB_COR_USER_MST 
+           (SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME, ADDRESS, 
+            PHONE_NUMBER, EMAIL_ID, REGISTER_NO, REGISTER_NAME, SALES_TYPE, SALES_CATEGORY, 
+            USE_FLAG, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID,
+            UPDATE_TIME)
+    values (#{systemCode}, #{userId}, #{password}, #{userName}, #{address}, 
+            #{phoneNumber}, #{eMailId}, #{registerNo}, #{registerName}, #{salesType}, 
+            #{salesCategory}, #{useFlag}, 'system', NOW(), NULL, 
+            NULL)
+	]]>
+  </insert>
+
+<!-- TB_COR_USER_MST.UPDATE -->
+  <update id="update_TB_COR_USER_MST_01">
+  <![CDATA[
+    update BRUNNER.TB_COR_USER_MST
+       set PASSWORD = #{newPassword},
+           UPDATE_USER_ID = 'system',
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}  
+       and USER_ID = #{userId}
+       and PASSWORD = #{currentPassword}
+	]]>
+  </update>  
+  
+  <update id="update_TB_COR_USER_MST_02">
+  <![CDATA[
+    update BRUNNER.TB_COR_USER_MST
+       set USER_NAME = #{userName},
+           ADDRESS = #{address},
+           PHONE_NUMBER = #{phoneNumber},
+           EMAIL_ID = #{eMailId},
+           UPDATE_USER_ID = 'system',
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode} 
+       and USER_ID = #{userId}
+       and PASSWORD = #{password}
+	]]>
+  </update>
+
+  <update id="update_TB_COR_USER_MST_03">
+  <![CDATA[
+    update BRUNNER.TB_COR_USER_MST
+       set USE_FLAG = NULL,
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode} 
+       and USER_ID = #{userId}
+       and PASSWORD = #{password}
+	]]>
+  </update>
+  
+  <update id="update_TB_COR_USER_MST_04">
+  <![CDATA[
+    update BRUNNER.TB_COR_USER_MST
+       set AUTHORITY_GROUP_ID = #{authorityGroupId},
+           UPDATE_USER_ID = #{updateUserId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode} 
+       and USER_ID = #{userId}
+	]]>
+  </update>
+  
+<!-- TB_COR_USER_MST.SELECT -->
+  <select id="select_TB_COR_USER_MST_01" resultType="java.util.HashMap">
+  <![CDATA[
+    select SYSTEM_CODE, USER_ID, PASSWORD, USER_NAME, ADDRESS, 
+           PHONE_NUMBER, EMAIL_ID, REGISTER_NO, REGISTER_NAME, SALES_TYPE, 
+           SALES_CATEGORY, USE_FLAG, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, 
+           UPDATE_TIME  
+      from BRUNNER.TB_COR_USER_MST 
+     where SYSTEM_CODE = #{systemCode} 
+       and USER_ID = #{userId}
+       and USE_FLAG = 'Y'
+	]]>
+  </select>
+  
+  <select id="select_TB_COR_USER_MST_02" resultType="java.util.HashMap">
+  <![CDATA[
+    select UM.SYSTEM_CODE, UM.USER_ID, UM.USER_NAME, UM.AUTHORITY_GROUP_ID, 
+           AG.AUTHORITY_GROUP_NAME, UL.EXPIRE_DATE AS LICENSE_EXPIRE_DATE
+      from BRUNNER.TB_COR_USER_MST UM
+     left outer join BRUNNER.TB_COR_AUTHORITY_GROUP_MST AG
+        on (AG.SYSTEM_CODE = UM.SYSTEM_CODE
+            and AG.AUTHORITY_GROUP_ID = UM.AUTHORITY_GROUP_ID)
+     inner join BRUNNER.TB_COR_USER_LICENSE UL
+        on (UL.SYSTEM_CODE = UM.SYSTEM_CODE
+            and UL.USER_ID = UM.USER_ID
+            and UL.USE_FLAG = 'Y')
+     where UM.SYSTEM_CODE = #{systemCode} 
+       and UM.USER_ID like #{userId}
+       and UM.USE_FLAG = 'Y'
+	]]>
+  </select> 
+</mapper>

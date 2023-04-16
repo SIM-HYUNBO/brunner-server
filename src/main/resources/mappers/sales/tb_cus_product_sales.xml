@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.brunner.server">
+
+<!-- TB_CUS_PRODUCT_SALES --> 
+<!-- TB_CUS_PRODUCT_SALES.INSERT -->  
+  <insert id="insert_TB_CUS_PRODUCT_SALES_01">
+  <![CDATA[
+    insert into SALES.TB_CUS_PRODUCT_SALES 
+           (SYSTEM_CODE, USER_ID, SALES_SERIAL_NO, SALES_DATE, CUSTOMER_ID, 
+            PRODUCT_NAME, PRODUCT_UNIT, UNIT_PRICE, SALES_COUNT, SALES_AMOUNT,
+            RECEIVED_AMOUNT, SALES_COMMENT, USE_FLAG, CREATE_USER_ID, CREATE_TIME, 
+            UPDATE_USER_ID, UPDATE_TIME)
+    values (#{systemCode}, 
+            #{userId}, 
+            (select GEN.SERIAL_NO 
+              from (select IFNULL(MAX(SALES_SERIAL_NO), CONCAT(#{salesDate}, '000000')) + 1 as SERIAL_NO
+  									  from SALES.TB_CUS_PRODUCT_SALES
+ 										 where SYSTEM_CODE = #{systemCode}
+   									   and USER_ID = #{userId}
+   										 and SALES_DATE = #{salesDate}
+                   ) GEN), 
+            #{salesDate}, 
+            #{customerId},
+            #{productName}, 
+            #{productUnit}, 
+            #{unitPrice}, 
+            #{salesCount}, 
+            #{salesAmount},
+            #{receivedAmount}, 
+            #{salesComment}, 
+            'Y', 
+            #{userId}, 
+            NOW(), 
+            NULL, 
+            NULL)
+	]]>
+  </insert>
+
+  <update id="update_TB_CUS_PRODUCT_SALES_01">
+  <![CDATA[
+    update SALES.TB_CUS_PRODUCT_SALES
+       set SALES_COUNT = #{salesCount},
+           SALES_AMOUNT = #{salesAmount},
+           RECEIVED_AMOUNT = #{receivedAmount},
+           SALES_COMMENT = #{salesComment},
+           USE_FLAG = 'Y',
+           UPDATE_USER_ID = #{userId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and SALES_SERIAL_NO = #{salesSerialNo}
+	]]>
+  </update>
+  
+<!-- TB_CUS_PRODUCT_SALES.UPDATE -->    
+  <update id="update_TB_CUS_PRODUCT_SALES_02">
+  <![CDATA[
+    update SALES.TB_CUS_PRODUCT_SALES
+       set USE_FLAG = NULL,
+           UPDATE_USER_ID = #{updateUserId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId}
+       and SALES_SERIAL_NO = #{salesSerialNo}
+	]]>
+  </update>
+
+<!-- TB_CUS_PRODUCT_SALES.SELECT -->    
+  <select id="select_TB_CUS_PRODUCT_SALES_01" resultType="java.util.HashMap">
+  <![CDATA[
+    select PS.SALES_SERIAL_NO, PS.SALES_DATE, PS.CUSTOMER_ID, CM.REGISTER_NAME, PS.PRODUCT_NAME, PS.PRODUCT_UNIT, 
+           PS.UNIT_PRICE, PS.SALES_COUNT, PS.SALES_AMOUNT, PS.RECEIVED_AMOUNT, PS.SALES_COMMENT
+      from SALES.TB_CUS_PRODUCT_SALES PS
+     inner join SALES.TB_CUS_CUSTOMER_MST CM 
+        on (CM.SYSTEM_CODE = PS.SYSTEM_CODE
+       and CM.USER_ID = PS.USER_ID
+       and CM.CUSTOMER_ID = PS.CUSTOMER_ID)
+     where PS.SYSTEM_CODE = #{systemCode} 
+       and PS.USER_ID = #{userId}
+       and PS.SALES_DATE >= #{fromSalesDate}
+       and PS.SALES_DATE <= #{toSalesDate}
+       and PS.USE_FLAG = 'Y'
+	]]>
+  </select>    
+   
+  <select id="select_TB_CUS_PRODUCT_SALES_02" resultType="java.util.HashMap">
+  <![CDATA[
+    select SALES_DATE, CUSTOMER_ID, PRODUCT_NAME, PRODUCT_UNIT, UNIT_PRICE, 
+           SALES_COUNT, SALES_AMOUNT, RECEIVED_AMOUNT, SALES_COMMENT
+      from SALES.TB_CUS_PRODUCT_SALES
+     where SYSTEM_CODE = #{systemCode} 
+       and USER_ID = #{userId}
+       and SALES_SERIAL_NO = #{salesSerialNo}
+	]]>
+  </select> 
+  
+   <select id="select_TB_CUS_PRODUCT_SALES_03" resultType="java.util.HashMap">
+  <![CDATA[
+    select PS.SALES_SERIAL_NO, PS.SALES_DATE, PS.CUSTOMER_ID, CM.REGISTER_NAME, PS.PRODUCT_NAME, 
+           PS.PRODUCT_UNIT, PS.UNIT_PRICE, PS.SALES_COUNT, PS.SALES_AMOUNT, PS.RECEIVED_AMOUNT, 
+           PS.SALES_COMMENT
+      from SALES.TB_CUS_PRODUCT_SALES PS
+     inner join SALES.TB_CUS_CUSTOMER_MST CM 
+        on (CM.SYSTEM_CODE = PS.SYSTEM_CODE
+       and CM.USER_ID = PS.USER_ID
+       and CM.CUSTOMER_ID = PS.CUSTOMER_ID)
+     where PS.SYSTEM_CODE = #{systemCode} 
+       and PS.USER_ID = #{userId}
+       and PS.SALES_DATE >= #{fromSalesDate}
+       and PS.SALES_DATE <= #{toSalesDate}
+       and PS.CUSTOMER_ID = #{customerId}
+       and PS.USE_FLAG = 'Y'
+	]]>
+  </select>    
+</mapper>

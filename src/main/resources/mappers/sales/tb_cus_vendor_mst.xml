@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.brunner.server">
+
+<!-- TB_CUS_VENDOR_MST -->  
+<!-- TB_CUS_VENDOR_MST.INSERT -->
+  <insert id="insert_TB_CUS_VENDOR_MST_01">
+  <![CDATA[
+    insert into SALES.TB_CUS_VENDOR_MST
+          (SYSTEM_CODE, USER_ID, VENDOR_ID, SALES_TYPE, SALES_CATEGORY,
+           REGISTER_NAME, REGISTER_NO, ADDRESS, PHONE_NUMBER, USE_FLAG,
+           CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME)
+   values (#{systemCode}, #{userId}, #{vendorId}, #{salesType}, #{salesCategory},
+           #{registerName}, #{registerNo}, #{address}, #{phoneNumber}, #{useFlag},
+           #{userId}, NOW(), NULL, NULL) 
+	]]>
+  </insert> 
+  
+<!-- TB_CUS_VENDOR_MST.UPDATE -->
+  <update id="update_TB_CUS_VENDOR_MST_01">
+  <![CDATA[
+    update SALES.TB_CUS_VENDOR_MST
+       set SALES_TYPE = #{salesType},
+           SALES_CATEGORY = #{salesCategory},
+           REGISTER_NAME = #{registerName},
+           REGISTER_NO = #{registerNo},
+           ADDRESS = #{address},
+           PHONE_NUMBER = #{phoneNumber},
+           USE_FLAG = 'Y',
+           UPDATE_USER_ID = #{updateUserId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId}
+       and VENDOR_ID = #{vendorId}
+	]]>
+  </update>
+  
+  <update id="update_TB_CUS_VENDOR_MST_02">
+  <![CDATA[
+    update SALES.TB_CUS_VENDOR_MST
+       set USE_FLAG = NULL,
+           UPDATE_USER_ID = #{updateUserId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId}
+       and VENDOR_ID = #{vendorId}
+	]]>
+  </update> 
+
+<!-- TB_CUS_VENDOR_MST.SELECT -->  
+  <select id="select_TB_CUS_VENDOR_MST_01" resultType="java.util.HashMap">
+  <![CDATA[
+    select VENDOR_ID, SALES_TYPE, SALES_CATEGORY, REGISTER_NAME, REGISTER_NO, 
+           ADDRESS, PHONE_NUMBER 
+      from SALES.TB_CUS_VENDOR_MST
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId} 
+       and USE_FLAG = 'Y'
+	]]>
+  </select>   
+ 
+  <select id="select_TB_CUS_VENDOR_MST_02" resultType="java.util.HashMap">
+  <![CDATA[
+    select VENDOR_ID, SALES_TYPE, SALES_CATEGORY, REGISTER_NAME, REGISTER_NO, 
+           ADDRESS, PHONE_NUMBER 
+      from SALES.TB_CUS_VENDOR_MST
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId}
+       and VENDOR_ID = #{vendorId} 
+	]]>
+  </select>
+</mapper>

@@ -1,0 +1,52 @@
+plugins {
+	id 'org.springframework.boot' version '2.5.14'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'war'
+}
+
+group = 'com.brunner'
+version = '1.0.0'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter
+	implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '1.0.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
+	// https://mvnrepository.com/artifact/com.google.code.gson/gson
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.7'	
+	
+	// https://mvnrepository.com/artifact/com.rabbitmq/amqp-client
+	implementation group: 'com.rabbitmq', name: 'amqp-client', version: '5.12.0'	
+	
+	// https://mvnrepository.com/artifact/kr.co.linkhub/popbill-sdk
+	implementation 'kr.co.linkhub:popbill-spring-boot-starter:1.0.0'		
+	
+	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.28'
+
+	// https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp
+	implementation group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
+
+	// reference libraries
+	implementation  fileTree(dir: 'WEB-INF/lib', include: ['*.jar'])
+
+    // reference project for debugging (빌드시에는 삭제해야 library가 모두 포함됨)
+	// implementation project(':brunner-service')
+	// implementation project(':brunner-service-sales')
+}
+
+bootWar{                        
+	//bootWar Task
+	archiveBaseName="brunnerServer"
+	archiveVersion="0.0.1"
+}
+
+sourceCompatibility=16

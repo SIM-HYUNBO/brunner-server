@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.brunner.server">
+
+<!-- TB_CUS_MATERIAL_MST --> 
+<!-- TB_CUS_MATERIAL_MST.INSERT -->  
+   <insert id="insert_TB_CUS_MATERIAL_MST_01">
+  <![CDATA[
+    insert into SALES.TB_CUS_MATERIAL_MST 
+          (SYSTEM_CODE, USER_ID, MATERIAL_NAME, MATERIAL_UNIT, MATERIAL_DESC, 
+           UNIT_PRICE, USE_FLAG, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, 
+           UPDATE_TIME)
+   values (#{systemCode}, #{userId}, #{materialName}, #{materialUnit}, #{materialDesc}, 
+           #{unitPrice}, #{useFlag}, #{userId}, NOW(), NULL, 
+           NULL)
+	]]>
+  </insert>
+
+   <update id="update_TB_CUS_MATERIAL_MST_01">
+  <![CDATA[
+    update SALES.TB_CUS_MATERIAL_MST
+       set MATERIAL_DESC = #{materialDesc},
+           UNIT_PRICE = #{unitPrice},
+           USE_FLAG = 'Y',
+           UPDATE_USER_ID = #{userId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId}
+       and MATERIAL_NAME = #{materialName}
+       and MATERIAL_UNIT = #{materialUnit}
+	]]>
+  </update>
+  
+<!-- TB_CUS_MATERIAL_MST.UPDATE -->    
+  <update id="update_TB_CUS_MATERIAL_MST_02">
+  <![CDATA[
+    update SALES.TB_CUS_MATERIAL_MST
+       set USE_FLAG = NULL,
+           USER_ID = #{userId},
+           UPDATE_TIME = NOW()
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId}
+       and MATERIAL_NAME = #{materialName}
+       and MATERIAL_UNIT = #{materialUnit}
+	]]>
+  </update>
+
+<!-- TB_CUS_MATERIAL_MST.SELECT -->    
+  <select id="select_TB_CUS_MATERIAL_MST_01" resultType="java.util.HashMap">
+  <![CDATA[
+    select MATERIAL_NAME, MATERIAL_UNIT, MATERIAL_DESC, UNIT_PRICE, CREATE_USER_ID, 
+           CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME 
+      from SALES.TB_CUS_MATERIAL_MST
+     where SYSTEM_CODE = #{systemCode} 
+       and USER_ID = #{userId}
+       and USE_FLAG = 'Y'
+	]]>
+  </select>    
+   
+  <select id="select_TB_CUS_MATERIAL_MST_02" resultType="java.util.HashMap">
+  <![CDATA[
+    select MATERIAL_NAME, MATERIAL_UNIT, MATERIAL_DESC, UNIT_PRICE, CREATE_USER_ID, 
+           CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME 
+      from SALES.TB_CUS_MATERIAL_MST
+     where SYSTEM_CODE = #{systemCode} 
+       and USER_ID = #{userId}
+       and MATERIAL_NAME = #{materialName}
+       and MATERIAL_UNIT = #{materialUnit}
+	]]>
+  </select>
+</mapper>

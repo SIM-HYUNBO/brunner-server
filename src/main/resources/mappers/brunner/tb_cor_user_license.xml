@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.brunner.server">
+
+<!-- TB_COR_USER_LICENSE -->
+<!-- TB_COR_USER_LICENSE.INSERT -->  
+  <insert id="insert_TB_COR_USER_LICENSE_01">
+  <![CDATA[
+    insert into BRUNNER.TB_COR_USER_LICENSE 
+           (SYSTEM_CODE, USER_ID, LICENSE_KEY, START_DATE, EXPIRE_DATE, 
+            USE_FLAG, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME)
+    values (#{systemCode}, #{userId}, #{licenseKey}, NOW(), NOW(), 
+            'Y', 'system', NOW(), NULL, NULL)
+	]]>
+  </insert>
+
+<!-- TB_COR_USER_LICENSE.UPDATE -->  
+  <select id="update_TB_COR_USER_LICENSE_01" resultType="java.util.HashMap">
+  <![CDATA[
+    update BRUNNER.TB_COR_USER_LICENSE
+       set EXPIRE_DATE = #{expireDate}
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId}
+	]]>
+  </select>
+
+<!-- TB_COR_USER_LICENSE.SELECT -->  
+  <select id="select_TB_COR_USER_LICENSE_01" resultType="java.util.HashMap">
+  <![CDATA[
+    select SYSTEM_CODE, USER_ID, LICENSE_KEY, START_DATE, EXPIRE_DATE, 
+           USE_FLAG, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME
+      from BRUNNER.TB_COR_USER_LICENSE
+     where SYSTEM_CODE = #{systemCode}
+       and LICENSE_KEY = #{licenseKey}
+	]]>
+  </select>
+
+  <select id="select_TB_COR_USER_LICENSE_02" resultType="java.util.HashMap">
+  <![CDATA[
+    select SYSTEM_CODE, USER_ID, LICENSE_KEY, START_DATE, EXPIRE_DATE, 
+           USE_FLAG, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME
+      from BRUNNER.TB_COR_USER_LICENSE
+     where SYSTEM_CODE = #{systemCode}
+       and USER_ID = #{userId}
+	]]>
+  </select>    
+</mapper>
